@@ -1,3 +1,4 @@
+//define html elements 
 const taskForm = document.getElementById("task-form");
 const confirmCloseDialog = document.getElementById("confirm-close-dialog");
 const openTaskFormBtn = document.getElementById("open-task-form-btn");
@@ -10,22 +11,24 @@ const titleInput = document.getElementById("title-input");
 const dateInput = document.getElementById("date-input");
 const descriptionInput = document.getElementById("description-input");
 
+//taskData stores all tasks. It might be empty.
 const taskData = JSON.parse(localStorage.getItem("data")) || [];
-let currentTask = {};
+let currentTask = {}; //A newly-built or edited task 
 
+//check if it's a new task or an existing task.
 const addOrUpdateTask = () => {
   const dataArrIndex = taskData.findIndex((item) => item.id === currentTask.id);
   const taskObj = {
-    id: `${titleInput.value.toLowerCase().split(" ").join("-")}-${Date.now()}`,
+    id: `${titleInput.value.toLowerCase().split(" ").join("-")}-${Date.now()}`, //make the id unique
     title: titleInput.value,
     date: dateInput.value,
     description: descriptionInput.value,
-  };
+  }; // a taskk's detail
 
   if (dataArrIndex === -1) {
-    taskData.unshift(taskObj);
+    taskData.unshift(taskObj); //if id doesn't exit, new a task in the array.
   } else {
-    taskData[dataArrIndex] = taskObj;
+    taskData[dataArrIndex] = taskObj; //if not, update the existing one with the latest updatas.
   }
 
   localStorage.setItem("data", JSON.stringify(taskData));
@@ -33,9 +36,11 @@ const addOrUpdateTask = () => {
   reset()
 };
 
-const updateTaskContainer = () => {
-  tasksContainer.innerHTML = "";
 
+const updateTaskContainer = () => {
+  tasksContainer.innerHTML = ""; //this must be here; otherwise, no innerHTML can be appended.
+  
+  //use destructuring
   taskData.forEach(
     ({ id, title, date, description }) => {
         (tasksContainer.innerHTML += `
@@ -43,10 +48,10 @@ const updateTaskContainer = () => {
           <p><strong>Title:</strong> ${title}</p>
           <p><strong>Date:</strong> ${date}</p>
           <p><strong>Description:</strong> ${description}</p>
-          <button onclick="editTask(this)" type="button" class="btn">Edit</button>
+          <button onclick="editTask(this)" type="button" class="btn">Edit</button> 
           <button onclick="deleteTask(this)" type="button" class="btn">Delete</button> 
         </div>
-      `)
+      `) //editTask(this) refers to the element itself.
     }
   );
 };
@@ -58,7 +63,7 @@ const deleteTask = (buttonEl) => {
   );
 
   buttonEl.parentElement.remove();
-  taskData.splice(dataArrIndex, 1);
+  taskData.splice(dataArrIndex, 1); //remove 1 value at dataArrIndex
   localStorage.setItem("data", JSON.stringify(taskData));
 }
 
@@ -115,7 +120,6 @@ discardBtn.addEventListener("click", () => {
 });
 
 taskForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
+  e.preventDefault(); //prevent it from submitting a form
   addOrUpdateTask();
 });
